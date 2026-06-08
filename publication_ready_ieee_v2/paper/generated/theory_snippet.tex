@@ -1,0 +1,13 @@
+\subsection{Analytical Bound}
+For a given robust sample $s$, let $y_{\ell,s} = d_{\ell,s} + \mathbf{a}_{s}^{T}\boldsymbol{\theta}$ and $y_{e,s} = d_{e,s} + \mathbf{b}_{s}^{T}\boldsymbol{\theta}$.
+By the triangle inequality,
+\begin{equation}
+|y_{\ell,s}| \le |d_{\ell,s}| + \sum_{n=1}^{N}|a_{s,n}|, \qquad |y_{e,s}| \le |d_{e,s}| + \sum_{n=1}^{N}|b_{s,n}|.
+\label{eq:triangle_bound}
+\end{equation}
+Therefore, the legitimate SNR satisfies
+\begin{equation}
+\gamma_{\ell,s} \le \frac{P_t}{\sigma^2}\left(|d_{\ell,s}| + \sum_{n=1}^{N}|a_{s,n}|\right)^2.
+\label{eq:snr_bound}
+\end{equation}
+Equations~\eqref{eq:triangle_bound}--\eqref{eq:snr_bound} provide a simple upper bound that explains why the reflected-link gain increases with $N$ while remaining limited by hardware loss and CSI uncertainty.

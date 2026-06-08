@@ -1,0 +1,10 @@
+\subsection{Proposed Robust Solver}
+\noindent\textbf{Algorithm 1: Robust projected coordinate ascent}
+\begin{enumerate}
+\item Initialize the IRS phases from the secrecy-aware closed-form alignment between the legitimate and eavesdropper cascades.
+\item Draw $S$ robust channel samples using the covariance-structured CSI error model.
+\item For each outer iteration and each IRS element, update the element phase by maximizing the local surrogate objective induced by~\eqref{eq:robust_obj}.
+\item Project the updated phase onto the $b$-bit quantized unit-modulus feasible set.
+\item Stop after the prescribed iteration budget or when the objective trace stabilizes.
+\end{enumerate}
+\noindent In this package, the default settings are $I=10$ projected sweeps and $S=8$ robust samples, which yields overall complexity $O(ISN)$.

@@ -1,0 +1,89 @@
+\documentclass[journal]{IEEEtran}
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{cite}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+\title{Robust Secrecy-Aware Hybrid IRS Optimization Under Imperfect CSI and Hardware Impairments}
+
+\author{M.~Arul~Pugazhendhi and Kishore~R%
+\thanks{M. Arul Pugazhendhi and Kishore R are with the Department of Electronics and Communication Engineering, IFET College of Engineering, Villupuram, Tamil Nadu, India (e-mail: arulpugazh@yahoo.com; kishore0786k@gmail.com).}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\input{generated/abstract_text.tex}
+\end{abstract}
+
+\begin{IEEEkeywords}
+Intelligent reflecting surface, NOMA, physical layer security, imperfect CSI, hardware impairments, reproducible simulation
+\end{IEEEkeywords}
+
+\section{Introduction}
+Intelligent reflecting surfaces (IRSs) are widely regarded as a promising enabler for beyond-5G and 6G links because they allow propagation shaping without fully active radio-frequency chains. However, a large fraction of the literature still evaluates IRS control under ideal assumptions: perfect CSI, lossless reflection, and performance metrics centered on rate alone. Those assumptions are especially fragile in security-oriented NOMA settings, where imperfect CSI, phase noise, amplitude loss, and residual SIC can shift the operating point enough to invalidate idealized claims.
+
+This manuscript studies a more practical design point: secrecy-aware hybrid IRS optimization for an IRS-assisted NOMA link under correlated Rician fading, quantized reflection phases, CSI uncertainty, hardware impairments, and an external eavesdropper. The paper emphasis is not that the proposed method is universally best on every scalar metric, but that it offers a cleaner robust-secrecy operating point than legitimate-only optimization and simple heuristic alignment while remaining computationally tractable.
+
+The submission-ready contribution can be summarized as follows. First, we formulate a quantized unit-modulus secrecy-aware IRS design under CSI uncertainty and hardware loss. Second, we solve the resulting problem with a robust sample-average projected coordinate-ascent algorithm whose complexity scales as $O(ISN)$. Third, we back the formulation with a reproducible evidence package that reports confidence intervals, convergence behavior, and multi-metric comparisons across rate, secrecy, energy efficiency, outage, and fairness.
+
+\section{Related Work and Positioning}
+\input{generated/related_work.tex}
+
+\section{System Model}
+The simulated system consists of one transmitter, one IRS, multiple NOMA users, and an eavesdropper. The channel model includes correlated Rician fading with path loss and log-normal shadowing. The reflected link is subject to phase quantization, phase noise, and amplitude loss. Imperfect CSI is modeled through estimation error variance, while NOMA decoding includes a residual SIC term. Default operating parameters are summarized in Table~\ref{tab:setup}.
+
+\input{generated/setup_table.tex}
+
+\input{generated/system_model.tex}
+
+\section{Proposed Method}
+The proposed controller uses a secrecy-aware robust IRS phase strategy that balances legitimate-link enhancement against leakage suppression under quantized unit-modulus constraints. Relative to the literature-inspired AO baseline, the proposed solver couples secrecy into the objective instead of optimizing the legitimate link alone; relative to greedy alignment, it explicitly averages across uncertain channel realizations. The evaluation therefore emphasizes not only average SNR, but also NOMA sum rate, secrecy rate, energy efficiency, outage, fairness, robust gain, and convergence behavior.
+
+\input{generated/problem_formulation.tex}
+
+\input{generated/algorithm_box.tex}
+
+\input{generated/theory_snippet.tex}
+
+\section{Experimental Methodology}
+All results in this package are generated from the repository using a fixed random seed and a deterministic publication-build script. The builder exports the experiment JSON, figure PDFs and PNGs, comparison tables, figure insights, and manuscript support files into the repository. This workflow is intended to reduce the gap between exploratory dashboards and submission-grade reproducibility. The baseline stack used throughout the manuscript is: direct link only, random IRS, greedy IRS, a literature-inspired legitimate-only AO baseline, and the proposed robust secrecy-aware solver.
+
+The AO comparator is intentionally labeled as literature-inspired rather than an exact reimplementation of any single published method. That wording is important for reviewer-facing accuracy: the paper claims a robust secrecy-aware formulation and reproducible evaluation package, not an exact reproduction of every competing algorithm in the literature.
+
+\section{Results and Discussion}
+\input{generated/results_paragraph.tex}
+
+Table~\ref{tab:comparison} summarizes the main benchmark comparison across the available IRS strategies. Table~\ref{tab:ablation} reports the impact of removing major components from the full design.
+
+\input{generated/comparison_table.tex}
+
+\input{generated/ablation_table.tex}
+
+\input{generated/figures_section.tex}
+
+The interpretive notes for these figures are recorded in \texttt{results/publication\_package/figure\_insights.md}. Across the reported sweeps, the most defensible paper angle is secrecy-aware robustness rather than rate-only dominance. In particular, the proposed solver should be discussed as improving secrecy and robust utility over the AO surrogate and over greedy alignment under CSI stress, while any small nominal-rate deficits against simpler baselines should be acknowledged explicitly rather than hidden.
+
+\section{Limitations and Future Work}
+The present study is simulation-based and does not claim over-the-air validation. The AO baseline is literature-inspired rather than a bit-exact reproduction, and the channel model remains single-cell. Future work can extend the study to multi-cell interference, joint active-passive beamforming, learned warm starts for large surfaces, and hardware-constrained experimental prototypes.
+
+\section{Conclusion}
+This work presents a secrecy-aware robust IRS optimization study for practical IRS-assisted NOMA links under correlated fading, CSI uncertainty, and hardware loss. The final package combines a formal optimization problem, a projected robust solver, analytical bounding arguments, and a reproducible experimental stack that exports the tables and figures used in the manuscript. The resulting evidence supports a defensible journal positioning centered on robust secrecy performance rather than dashboard-style visualization alone.
+
+\begin{thebibliography}{00}
+\bibitem{shen2021tcom} H. Shen, W. Xu, S. Gong, C. Zhao, and D. W. K. Ng, ``Beamforming Optimization for IRS-Aided Communications with Transceiver Hardware Impairments,'' \emph{IEEE Transactions on Communications}, vol. 69, no. 2, pp. 1214--1227, 2021, doi: 10.1109/TCOMM.2020.3033575.
+\bibitem{zhang2022tcom} Z. Zhang, J. Chen, Q. Wu, Y. Liu, L. Lv, and X. Su, ``Securing NOMA Networks by Exploiting Intelligent Reflecting Surface,'' \emph{IEEE Transactions on Communications}, 2022.
+\bibitem{wang2022twc} W. Wang, X. Liu, J. Tang, N. Zhao, Y. Chen, Z. Ding, and X. Wang, ``Beamforming and Jamming Optimization for IRS-Aided Secure NOMA Networks,'' \emph{IEEE Transactions on Wireless Communications}, vol. 21, no. 3, pp. 1557--1569, 2022, doi: 10.1109/TWC.2021.3104856.
+\bibitem{yang2023cl} D. Yang, J. Xu, W. Xu, Y. Huang, and Z. Lu, ``Secure Communication for Spatially Correlated RIS-Aided Multiuser Massive MIMO Systems: Analysis and Optimization,'' \emph{IEEE Communications Letters}, 2023.
+\bibitem{jia2023cl} H. Jia, L. Ma, and S. Valaee, ``STAR-RIS Enabled Downlink Secure NOMA Network Under Imperfect CSI of Eavesdroppers,'' \emph{IEEE Communications Letters}, 2023.
+\bibitem{na2024tvt} J. Na, J. Kang, and J. Kang, ``Intelligent Reflecting Surface-Assisted Uplink NOMA for eMBB and URLLC Coexistence,'' \emph{IEEE Transactions on Vehicular Technology}, 2024.
+\bibitem{gao2025tgcn} M. Gao, Y. Wang, H. Li, and J. Guo, ``Outage Constrained Transmit Optimization for Spatially Correlated RIS-Aided MIMO Systems With Imperfect CSI and Phase Errors,'' \emph{IEEE Transactions on Green Communications and Networking}, early access, 2025, doi: 10.1109/TGCN.2024.3432111.
+\bibitem{ieee-style} IEEE Publishing Operations, ``IEEE Editorial Style Manual for Authors,'' IEEE Author Center, 2025.
+\bibitem{ieee-ethics} IEEE, ``IEEE Author Ethics Guidelines,'' IEEE Author Center, 2025.
+\end{thebibliography}
+
+\end{document}

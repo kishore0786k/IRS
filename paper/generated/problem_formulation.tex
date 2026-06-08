@@ -1,0 +1,13 @@
+\subsection{Optimization Problem}
+We optimize the IRS phase vector $\boldsymbol{\theta} = [e^{j\phi_1}, \ldots, e^{j\phi_N}]^{T}$ under practical uncertainty.
+The robust sample-average objective used in the simulator is
+\begin{equation}
+\max_{\boldsymbol{\theta}} \; \frac{1}{S}\sum_{s=1}^{S}\left(\left|d_{\ell,s} + \mathbf{a}_{s}^{T}\boldsymbol{\theta}\right|^{2} - \eta \left|d_{e,s} + \mathbf{b}_{s}^{T}\boldsymbol{\theta}\right|^{2}\right),
+\label{eq:robust_obj}
+\end{equation}
+subject to
+\begin{equation}
+|\theta_n| = 1,\;\; \phi_n \in \left\{0, \frac{2\pi}{2^b}, \ldots, \frac{(2^b-1)2\pi}{2^b}\right\}, \;\; n=1,\ldots,N.
+\label{eq:phase_constraint}
+\end{equation}
+Here $S$ is the number of robust channel samples, $d_{\ell,s}$ and $d_{e,s}$ are the direct legitimate and eavesdropper channels, and $\mathbf{a}_s$ and $\mathbf{b}_s$ denote the reflected cascades under CSI uncertainty.

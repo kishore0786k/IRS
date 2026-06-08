@@ -1,0 +1,39 @@
+{
+  "generated_at_utc": "2026-04-09T10:18:55.053072+00:00",
+  "count": 12,
+  "saved": [
+    "01_SNR_vs_Distance.png",
+    "02_SNR_vs_N.png",
+    "03_Spectral_Efficiency_vs_Bits.png",
+    "04_NOMA_SumRate_vs_N.png",
+    "05_Secrecy_vs_N.png",
+    "06_EE_vs_TxPower.png",
+    "07_BER_vs_SNR.png",
+    "08_Radar_KPI.png",
+    "09_CDF_SNR.png",
+    "10_Secrecy_vs_CSI.png",
+    "11_Gain_vs_Greedy_CSI.png",
+    "12_Convergence.png"
+  ],
+  "errors": [],
+  "folder": "C:\\Users\\kisho\\Downloads\\irs_fixed\\results",
+  "params": {
+    "Pt": 5,
+    "N": 84,
+    "freq_GHz": 5.5,
+    "phase_bits": 4,
+    "dist_m": 39,
+    "K_users": 6,
+    "rician_K": 5,
+    "alpha": 2.8,
+    "d_irs": 5,
+    "d_irs_rx": 10,
+    "d_eve": 12,
+    "scheme": "opt",
+    "mode": "medium",
+    "csi_mode": "imperfect",
+    "csi_error_var": 0.08,
+    "secrecy_weight": 0.18
+  },
+  "mode": "medium"
+}

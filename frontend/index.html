@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IRS-Assisted 5G/6G Research Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">IRS</div>
+      <div>
+        <h1>IRS-Assisted 5G/6G Research Dashboard</h1>
+        <p>Beamforming | NOMA | Physical Layer Security | Correlated Indoor Channels | Experiment Dashboard</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="stat-pill"><span class="dot" id="serverDot"></span><span id="serverStatus">Checking...</span></div>
+      <div class="stat-pill mono" id="simClock">idle</div>
+      <button class="btn btn-ghost" id="btnReconnect" style="width:auto;padding:5px 12px">Reconnect</button>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <section class="panel">
+        <div class="panel-title">System Parameters</div>
+        <div class="control-grid">
+          <label class="control"><span>Tx Power</span><input id="sPt" type="range" min="1" max="30" step="1" value="10"><b id="sPtVal">10 W</b></label>
+          <label class="control"><span>IRS Elements N</span><input id="sN" type="range" min="4" max="512" step="4" value="64"><b id="sNVal">64</b></label>
+          <label class="control"><span>Carrier Frequency</span><input id="sF" type="range" min="1" max="7" step="0.5" value="3.5"><b id="sFVal">3.5 GHz</b></label>
+          <label class="control"><span>Phase Bits</span><input id="sB" type="range" min="1" max="6" step="1" value="3"><b id="sBVal">3 bits</b></label>
+          <label class="control"><span>Tx-Rx Distance</span><input id="sD" type="range" min="2" max="50" step="1" value="15"><b id="sDVal">15 m</b></label>
+          <label class="control"><span>NOMA Users</span><input id="sK" type="range" min="1" max="8" step="1" value="3"><b id="sKVal">3 users</b></label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">Channel Parameters</div>
+        <div class="control-grid">
+          <label class="control"><span>Rician K-Factor</span><input id="sRK" type="range" min="0" max="20" step="1" value="5"><b id="sRKVal">5 dB</b></label>
+          <label class="control"><span>Tx-IRS Distance</span><input id="sDirs" type="range" min="1" max="20" step="1" value="5"><b id="sDirsVal">5 m</b></label>
+          <label class="control"><span>IRS-Rx Distance</span><input id="sDirr" type="range" min="1" max="20" step="1" value="10"><b id="sDirrVal">10 m</b></label>
+          <label class="control"><span>Eavesdropper Distance</span><input id="sDeve" type="range" min="2" max="30" step="1" value="12"><b id="sDeveVal">12 m</b></label>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">Simulation Mode</div>
+        <label class="control select-control"><span>IRS Scheme</span>
+          <select id="sScheme">
+            <option value="opt">Optimized (hybrid)</option>
+            <option value="greedy">Greedy IRS</option>
+            <option value="random">Random phase shift</option>
+            <option value="none">Direct link only</option>
+            <option value="fixed1bit">Fixed 1-bit quantization</option>
+            <option value="fixed_quant">Fixed quantization</option>
+          </select>
+        </label>
+        <label class="control select-control" style="margin-top:10px"><span>Run Mode</span>
+          <select id="sMode">
+            <option value="fast">Fast</option>
+            <option value="medium" selected>Medium</option>
+            <option value="full">Full</option>
+          </select>
+        </label>
+        <label class="control select-control" style="margin-top:10px"><span>CSI Mode</span>
+          <select id="sCSI">
+            <option value="imperfect" selected>Imperfect CSI</option>
+            <option value="perfect">Perfect CSI</option>
+          </select>
+        </label>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">Run and Export</div>
+        <div class="button-stack">
+          <button class="btn btn-primary" id="btnRunOverview">Run Overview</button>
+          <button class="btn btn-secondary" id="btnRunAll">Run All Charts</button>
+          <button class="btn btn-secondary" id="btnRunCompare">Run Comparison</button>
+          <button class="btn btn-secondary" id="btnRunRadar">Run Radar</button>
+          <button class="btn btn-secondary" id="btnRunCDF">Run CDF</button>
+          <button class="btn btn-secondary" id="btnRunCSI">Run CSI Sweep</button>
+          <button class="btn btn-secondary" id="btnRunBatch">Run Everything</button>
+          <button class="btn btn-ghost" id="btnExportAll">Export All Charts</button>
+        </div>
+        <p style="font-size:0.65rem;color:var(--text2);margin-top:8px;line-height:1.6">
+          Sliders update the live preview instantly. Run buttons request backend Monte Carlo results, and export saves a reproducibility manifest beside the PNG figures.
+        </p>
+      </section>
+
+      <section class="panel info-panel">
+        <div class="panel-title">Model Summary</div>
+        <ul class="mini-list">
+          <li>Correlated Rician indoor channel model</li>
+          <li>Hybrid IRS phase design with quantization</li>
+          <li>Imperfect CSI and hardware impairment factors</li>
+          <li>Power-domain NOMA with residual SIC term</li>
+          <li>Secrecy-rate, BER, energy, and outage metrics</li>
+          <li>Batch API for reproducible chart generation</li>
+        </ul>
+      </section>
+    </aside>
+
+    <main class="content">
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-tab="overview">Overview</button>
+        <button class="tab" data-tab="charts">All Charts</button>
+        <button class="tab" data-tab="scene">3D Scene</button>
+        <button class="tab" data-tab="compare">Comparison</button>
+        <button class="tab" data-tab="theory">System Model</button>
+      </nav>
+
+      <section class="tab-panel active" id="tab-overview">
+        <div class="kpi-grid">
+          <article class="kpi kpi-blue"><span>Average SNR</span><strong id="kpiSNR">--</strong><small id="kpiSNRNote">move any slider</small></article>
+          <article class="kpi kpi-green"><span>NOMA Sum Rate</span><strong id="kpiRate">--</strong><small>bps/Hz</small></article>
+          <article class="kpi kpi-orange"><span>Secrecy Rate</span><strong id="kpiSec">--</strong><small>bps/Hz</small></article>
+          <article class="kpi kpi-purple"><span>Energy Efficiency</span><strong id="kpiEE">--</strong><small>Mbits/Joule</small></article>
+        </div>
+
+        <div class="chart-grid two">
+          <article class="chart-card">
+            <header class="chart-head"><div><h3>Received SNR vs Distance</h3><p>Optimized IRS, greedy IRS, random phase, and no IRS</p></div><button class="btn btn-mini btn-export" data-target="chartDistance">PNG</button></header>
+            <div class="chart-wrap"><canvas id="chartDistance"></canvas></div>
+          </article>
+          <article class="chart-card">
+            <header class="chart-head"><div><h3>SNR vs IRS Elements N</h3><p>Element scaling under all available baselines</p></div><button class="btn btn-mini btn-export" data-target="chartNScale">PNG</button></header>
+            <div class="chart-wrap"><canvas id="chartNScale"></canvas></div>
+          </article>
+          <article class="chart-card">
+            <header class="chart-head"><div><h3>Spectral Efficiency vs Phase Bits</h3><p>Quantization sensitivity from backend sweep</p></div><button class="btn btn-mini btn-export" data-target="chartBits">PNG</button></header>
+            <div class="chart-wrap"><canvas id="chartBits"></canvas></div>
+          </article>
+          <article class="chart-card">
+            <header class="chart-head"><div><h3>NOMA Sum Rate vs N</h3><p>Sum-rate evolution for each IRS strategy</p></div><button class="btn btn-mini btn-export" data-target="chartNoma">PNG</button></header>
+            <div class="chart-wrap"><canvas id="chartNoma"></canvas></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-charts">
+        <div class="chart-grid two">
+          <article class="chart-card"><header class="chart-head"><div><h3>Secrecy Rate vs N</h3><p>Legitimate-link advantage under secrecy-aware control</p></div><button class="btn btn-mini btn-export" data-target="chartSecrecyFull">PNG</button></header><div class="chart-wrap"><canvas id="chartSecrecyFull"></canvas></div></article>
+          <article class="chart-card"><header class="chart-head"><div><h3>Energy Efficiency vs Tx Power</h3><p>Power-rate tradeoff across IRS strategies</p></div><button class="btn btn-mini btn-export" data-target="chartEEFull">PNG</button></header><div class="chart-wrap"><canvas id="chartEEFull"></canvas></div></article>
+          <article class="chart-card"><header class="chart-head"><div><h3>BER vs SNR</h3><p>BER curves returned by the backend</p></div><button class="btn btn-mini btn-export" data-target="chartBERFull">PNG</button></header><div class="chart-wrap"><canvas id="chartBERFull"></canvas></div></article>
+          <article class="chart-card"><header class="chart-head"><div><h3>Radar - Normalized KPI</h3><p>Compact quality snapshot of the active scheme</p></div><button class="btn btn-mini btn-export" data-target="chartRadarFull">PNG</button></header><div class="chart-wrap"><canvas id="chartRadarFull"></canvas></div></article>
+          <article class="chart-card wide"><header class="chart-head"><div><h3>CDF of SNR</h3><p>Outage-oriented distribution view</p></div><button class="btn btn-mini btn-export" data-target="chartCDFFull">PNG</button></header><div class="chart-wrap"><canvas id="chartCDFFull"></canvas></div></article>
+          <article class="chart-card"><header class="chart-head"><div><h3>Secrecy Rate vs CSI Error</h3><p>Robustness under imperfect CSI</p></div><button class="btn btn-mini btn-export" data-target="chartCSIError">PNG</button></header><div class="chart-wrap"><canvas id="chartCSIError"></canvas></div></article>
+          <article class="chart-card"><header class="chart-head"><div><h3>Gain vs Greedy (%) vs CSI Error</h3><p>Paper-ready robustness and improvement graph</p></div><button class="btn btn-mini btn-export" data-target="chartGainGreedy">PNG</button></header><div class="chart-wrap"><canvas id="chartGainGreedy"></canvas></div></article>
+          <article class="chart-card"><header class="chart-head"><div><h3>Monte Carlo Convergence</h3><p>Running mean, standard deviation, and CI95</p></div><button class="btn btn-mini btn-export" data-target="chartConvergence">PNG</button></header><div class="chart-wrap"><canvas id="chartConvergence"></canvas></div></article>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-scene">
+        <div class="scene-layout">
+          <article class="chart-card scene-card">
+            <header class="chart-head">
+              <div><h3>Indoor 3D Link View</h3><p>Tx, IRS panel, users, and the guarded eavesdropper</p></div>
+            </header>
+            <div class="scene-toolbar">
+              <span class="scene-pill">N: <b id="sc-N">64</b></span>
+              <span class="scene-pill">K: <b id="sc-K">3</b></span>
+              <span class="scene-pill">Pt: <b id="sc-Pt">10</b> W</span>
+              <span class="scene-pill">f: <b id="sc-F">3.5</b> GHz</span>
+            </div>
+            <div class="chart-wrap scene-wrap"><canvas id="sceneCanvas"></canvas></div>
+          </article>
+          <article class="panel theory-card scene-inspector">
+            <div class="panel-title">Research Visualizer</div>
+            <div class="scene-metric-grid">
+              <div class="scene-stat">
+                <span>CSI Mode</span>
+                <strong id="sc-csi-mode">Imperfect</strong>
+                <small id="sc-csi-note">beam distortion enabled</small>
+              </div>
+              <div class="scene-stat">
+                <span>SNR Gain vs Baseline</span>
+                <strong id="sc-snr-gain">--</strong>
+                <small>over direct-link baseline</small>
+              </div>
+              <div class="scene-stat">
+                <span>Secrecy Gain</span>
+                <strong id="sc-secrecy-gain">--</strong>
+                <small>vs leakage-heavy baseline</small>
+              </div>
+              <div class="scene-stat">
+                <span>Optimization Stage</span>
+                <strong id="sc-opt-stage">Random init</strong>
+                <small id="sc-opt-note">searching the phase codebook</small>
+              </div>
+            </div>
+
+            <div class="scene-block">
+              <h4>Optimization Timeline</h4>
+              <div class="scene-step-list">
+                <div class="scene-step" id="step-random"><b>1</b><span>Initial random phase</span></div>
+                <div class="scene-step" id="step-csi"><b>2</b><span>CSI-conditioned estimate</span></div>
+                <div class="scene-step" id="step-quant"><b>3</b><span>Quantized phase projection</span></div>
+                <div class="scene-step" id="step-final"><b>4</b><span>Secrecy-aware optimized phase</span></div>
+              </div>
+            </div>
+
+            <div class="scene-block">
+              <h4>Quantized Phase Levels</h4>
+              <div id="phaseLegend" class="phase-legend"></div>
+              <p class="scene-copy">The IRS tile colors encode element phases. The legend updates with the selected phase resolution so reviewers can see the quantization structure directly.</p>
+            </div>
+
+            <div class="scene-block">
+              <h4>Beam Legend</h4>
+              <div class="beam-legend">
+                <div><i class="beam-chip beam-chip-tx"></i><span>Tx to IRS feed beam</span></div>
+                <div><i class="beam-chip beam-chip-legit"></i><span>Green beam to legitimate users</span></div>
+                <div><i class="beam-chip beam-chip-leak"></i><span>Red dashed leakage toward eavesdropper</span></div>
+              </div>
+            </div>
+
+            <div class="scene-block">
+              <h4>Interpretation</h4>
+              <p class="scene-copy">
+                The scene is meant to behave like a visual methods figure. Perfect CSI sharpens the main lobe and cleans up the phase map, while imperfect CSI injects visible distortion, broader spillover, and stronger red leakage toward the eavesdropper.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-compare">
+        <div class="compare-summary-grid">
+          <article class="kpi kpi-blue"><span>Best SNR</span><strong id="bestSNR">--</strong><small id="bestScheme">--</small></article>
+          <article class="kpi kpi-green"><span>Best Rate</span><strong id="bestRate">--</strong><small id="bestRateScheme">--</small></article>
+          <article class="kpi kpi-orange"><span>Best Secrecy</span><strong id="bestSecrecy">--</strong><small id="bestSecrecyScheme">--</small></article>
+          <article class="kpi kpi-purple"><span>Best EE</span><strong id="bestEE">--</strong><small id="bestEEScheme">--</small></article>
+        </div>
+        <div class="chart-grid one">
+          <article class="chart-card"><header class="chart-head"><div><h3>Gain vs Greedy (%)</h3><p>Compact comparison of the main research claim</p></div><button class="btn btn-mini btn-export" data-target="chartCompareBar">PNG</button></header><div class="chart-wrap"><canvas id="chartCompareBar"></canvas></div></article>
+        </div>
+        <article class="panel table-panel">
+          <div class="panel-title">Scheme Comparison</div>
+          <div class="table-wrap">
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th>Scheme</th><th>SNR (dB)</th><th>Rate</th><th>Secrecy</th><th>EE</th><th>Outage @ 5 dB</th><th>Gain vs Greedy</th><th>Fairness</th>
+                </tr>
+              </thead>
+              <tbody id="compareTableBody"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="tab-panel" id="tab-theory">
+        <div class="theory-grid">
+          <article class="panel theory-card">
+            <div class="panel-title">Channel Model</div>
+            <code class="formula">h = sqrt(K/(K+1)) * h_LOS + sqrt(1/(K+1)) * h_NLOS</code>
+            <code class="formula">PL(d) = c / (4 * pi * f * d)^alpha * shadowing</code>
+            <p>The backend includes correlated Rician fading, distance-dependent loss, shadowing, CSI error, and phase noise so the results are not limited to an ideal passive surface model.</p>
+          </article>
+          <article class="panel theory-card">
+            <div class="panel-title">NOMA and OMA</div>
+            <code class="formula">x = sum_k sqrt(a_k * P_t) * s_k , sum_k a_k = 1</code>
+            <code class="formula">SINR_k = signal / (stronger-user interference + residual SIC + noise)</code>
+            <p>The dashboard compares IRS-assisted NOMA and OMA using the same channel family and reports sum-rate and fairness trends across IRS size.</p>
+          </article>
+          <article class="panel theory-card">
+            <div class="panel-title">Secrecy Metric</div>
+            <code class="formula">R_s = [log2(1 + gamma_leg) - log2(1 + gamma_eve)]^+</code>
+            <p>The model simulates a separate eavesdropper link and measures how much secure rate remains after the reflected path is shaped toward the legitimate receiver.</p>
+          </article>
+          <article class="panel theory-card">
+            <div class="panel-title">Publication Angle</div>
+            <p style="margin-bottom:8px">The strongest defensible contribution is the joint study of IRS phase control under imperfect CSI, hardware impairment, and secrecy-aware optimization rather than a generic "IRS improves SNR" claim.</p>
+            <ul class="mini-list">
+              <li>Show improvement over greedy, random, and direct-link baselines</li>
+              <li>Report confidence intervals and Monte Carlo convergence</li>
+              <li>Include CSI-error robustness and secrecy degradation curves</li>
+              <li>Use a consistent simulation-to-figure pipeline</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loader-card">
+      <div class="spinner"></div>
+      <div id="loadingText">Computing simulations...</div>
+      <small id="loadingSub">Monte Carlo in progress</small>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="js/charts.js"></script>
+  <script src="js/scene3d.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

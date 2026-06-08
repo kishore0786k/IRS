@@ -1,0 +1,24 @@
+\subsection{Signal and Channel Model}
+The legitimate and eavesdropper effective channels are modeled as
+\begin{equation}
+h_{\ell} = h_{d} + \beta \sum_{n=1}^{N} h_{\mathrm{TI},n} \theta_n h_{\mathrm{IU},n}, \qquad h_{e} = h_{de} + \beta_e \sum_{n=1}^{N} h_{\mathrm{TI},n} \theta_n h_{\mathrm{IE},n},
+\label{eq:effective_channels}
+\end{equation}
+where $h_d$ and $h_{de}$ denote the direct links, $h_{\mathrm{TI}}$, $h_{\mathrm{IU}}$, and $h_{\mathrm{IE}}$ are the transmitter-IRS, IRS-user, and IRS-eavesdropper channels, and $\theta_n=e^{j\phi_n}$ is the $n$th IRS coefficient.
+The CSI available to the optimizer follows
+\begin{equation}
+\widehat{\mathbf{h}} = \mathbf{h} + \mathbf{e}, \qquad \mathbf{e} \sim \mathcal{CN}(\mathbf{0}, \sigma_{\mathrm{csi}}^{2}\mathbf{I}),
+\label{eq:csi_model}
+\end{equation}
+and the reflected coefficients are further impaired by phase noise and amplitude loss through $\widetilde{\theta}_n = \rho e^{j(\phi_n + \delta_n)}$ with $\delta_n \sim \mathcal{N}(0,\sigma_{\phi}^{2})$.
+For user $k$, the received SINR under power-domain NOMA is approximated by
+\begin{equation}
+\gamma_k = \frac{a_k P_t |h_{\ell}|^2}{\sigma^2 + \sum_{j < k} a_j \varepsilon_{\mathrm{sic}} P_t |h_{\ell}|^2},
+\label{eq:noma_sinr}
+\end{equation}
+which yields the sum-rate objective $R_{\mathrm{NOMA}} = \sum_{k=1}^{K}\log_2(1+\gamma_k)$ and the secrecy rate
+\begin{equation}
+R_s = \max \left(0, R_{\mathrm{NOMA}} - \log_2(1+\gamma_e)\right).
+\label{eq:secrecy_rate}
+\end{equation}
+The robust-gain metric reported by the simulator is normalized as $G_{\mathrm{rob}} = \frac{R_{\mathrm{NOMA}} - 0.35 R_e}{1 + 0.04 + 0.5\sigma_{\phi}}$, which makes the CSI penalty explicit in the performance summary.
